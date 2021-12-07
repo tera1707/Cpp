@@ -1,7 +1,4 @@
-﻿// ConsoleApplication1.cpp : このファイルには 'main' 関数が含まれています。プログラム実行の開始と終了がそこで行われます。
-//
-
-#include <iostream>
+﻿#include <iostream>
 #include <string>
 
 // mallocをstatic_cast：キャストの練習
@@ -39,17 +36,6 @@ auto func1 = [](int size) -> int
     delete[] d;
 
     return 0;
-    //for (int i = 0; i < size; i++)
-    //{
-    //    a[i] = i;
-    //}
-
-    //for (int i = 0; i < size; i++)
-    //{
-    //    std::cout << std::to_string(a[i]) << std::endl;
-    //}
-
-    //return 0;
 };
 
 struct ABC
@@ -95,6 +81,7 @@ auto SafePtrFunc2 = []() -> void
     std::cout << p[0] << std::endl;
 };
 
+// -----------------------------------------------------------------
 
 // 生ポインタ：変数
 auto UnsafePtrFunc = []() -> void

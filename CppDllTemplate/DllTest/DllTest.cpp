@@ -5,6 +5,7 @@
 #include <wchar.h>
 #include <thread>
 #include <string>
+#include <functional>
 
 #define VC_DLL_EXPORTS
 #include "DllTest.h"
@@ -13,11 +14,14 @@ std::thread th_b;
 int threadStop = 0;
 
 // 関数ポインタ
-void (*pfunc1)(int) = nullptr;// あほ
-void (*pfunc2)(int) = nullptr;// 普通
+//void (*pfunc1)(int) = nullptr;// あほ
+std::function<void(int)> pfunc1;
+//void (*pfunc2)(int) = nullptr;// 普通
+std::function<void(int)> pfunc2;
 
 // 関数を登録するための関数
-void __cdecl RegisterCountingMethods(void (*pf1)(int), void (*pf2)(int))
+//void __cdecl RegisterCountingMethods(void (*pf1)(int), void (*pf2)(int))
+void __cdecl RegisterCountingMethods(std::function<void(int)> pf1, std::function<void(int)> pf2)
 {
     pfunc1 = pf1;
     pfunc2 = pf2;
