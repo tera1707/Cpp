@@ -100,7 +100,8 @@ BOOL createProcessAsUser(const std::wstring& app, const std::wstring& param, HAN
 
     return retval;
 }
-void OnLogon()
+
+void OnLogon(std::wstring appFullPath)
 {
     auto dwSesId = ::WTSGetActiveConsoleSessionId();
     auto winlogonPid = GetProcessIdByName(L"winlogon.exe");
@@ -124,9 +125,7 @@ void OnLogon()
 
     HANDLE hUserTokenDup = NULL;
 
-    if (!DuplicateTokenEx(hPToken, MAXIMUM_ALLOWED, &sa,
-        SecurityIdentification,
-        TokenPrimary, &hUserTokenDup))
+    if (!DuplicateTokenEx(hPToken, MAXIMUM_ALLOWED, &sa, SecurityIdentification, TokenPrimary, &hUserTokenDup))
     {
         CloseHandle(hProcess);
         CloseHandle(hPToken);
@@ -138,12 +137,11 @@ void OnLogon()
     STARTUPINFO si = {0};
     si.cb = sizeof(si);
 
-    DWORD  sessionId = WTSGetActiveConsoleSessionId();
     DWORD  creationFlags = CREATE_NEW_CONSOLE | NORMAL_PRIORITY_CLASS;
     LPVOID env = nullptr;
 
     // アクティブユーザのセッションを設定します
-    auto ret = SetTokenInformation(hUserTokenDup, TokenSessionId, &sessionId, sizeof(DWORD));
+    auto ret = SetTokenInformation(hUserTokenDup, TokenSessionId, &dwSesId, sizeof(DWORD));
 
     // 環境変数を設定します
     if (CreateEnvironmentBlock(&env, hUserTokenDup, TRUE)) {
@@ -153,33 +151,9 @@ void OnLogon()
         env = nullptr;
     }
 
-    auto retval = createProcessAsUser(L"C:\\Windows\\System32\\notepad.exe", L"", hUserTokenDup, creationFlags, env);
+    auto retval = createProcessAsUser(appFullPath, L"", hUserTokenDup, creationFlags, env);
 
     DestroyEnvironmentBlock(env);
-    //// interactive window station parameter; basically this indicates 
-    //// that the process created can display a GUI on the desktop
-    //WCHAR tmp[256] = L"winsta0\\default";
-    //si.lpDesktop = tmp;
-    ////lstrcpynW(si.lpDesktop, tmp.c_str(), tmp.length());
-
-    //int dwCreationFlags = NORMAL_PRIORITY_CLASS | CREATE_NEW_CONSOLE;
-
-    //WCHAR app[MAX_PATH] = L"C:\\Windows\\notepad.exe";
-    //LPPROCESS_INFORMATION lpprocInfo = { 0 };
-
-
-    //bool result = CreateProcessAsUser(hUserTokenDup,  // client's access token
-    //    NULL,             // file to execute
-    //    app,  // command line
-    //    &sa,           // pointer to process    SECURITY_ATTRIBUTES
-    //    &sa,           // pointer to thread SECURITY_ATTRIBUTES
-    //    FALSE,            // handles are not inheritable
-    //    dwCreationFlags,  // creation flags
-    //    NULL,      // pointer to new environment block 
-    //    NULL,             // name of current directory 
-    //    &si,           // pointer to STARTUPINFO structure
-    //    lpprocInfo      // receives information about new process
-    //);
 }
 
 
@@ -194,7 +168,7 @@ DWORD WINAPI SvcCtrlHandler(DWORD dwControl, DWORD dwEventType, LPVOID lpEventDa
     {
         a = 1;
 
-        OnLogon();
+        OnLogon(L"C:\\Windows\\System32\\notepad.exe");
     }
 
 
