@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MyUtilily
 {
@@ -33,7 +28,6 @@ namespace MyUtilily
                 throw new InvalidOperationException();
             }
 
-
             var sa = new NativeMethods.SECURITY_ATTRIBUTES();
             sa.nLength = Marshal.SizeOf(sa);
 
@@ -52,14 +46,13 @@ namespace MyUtilily
                 lpDesktop = @"winsta0\default",
             };
 
-
             var creationFlags = NativeMethods.CREATE_NEW_CONSOLE | NativeMethods.NORMAL_PRIORITY_CLASS;
             var env = IntPtr.Zero;
 
             // アクティブユーザのセッションを設定します
             var ret = NativeMethods.SetTokenInformation(hUserTokenDup, NativeMethods.TOKEN_INFORMATION_CLASS.TokenSessionId, ref sessionId, sizeof(NativeMethods.TOKEN_INFORMATION_CLASS));
 
-            // 環境変数を設定します
+            // 環境変数を設定
             if (NativeMethods.CreateEnvironmentBlock(out env, hUserTokenDup, true))
             {
                 creationFlags |= NativeMethods.CREATE_UNICODE_ENVIRONMENT;
@@ -73,8 +66,8 @@ namespace MyUtilily
 
             if (NativeMethods.CreateProcessAsUser(hUserTokenDup, IntPtr.Zero, commandline, IntPtr.Zero, IntPtr.Zero, false, creationFlags, env, IntPtr.Zero, ref si, out pi))
             {
-                NativeMethods.CloseHandle(pi.hThread);
-                NativeMethods.CloseHandle(pi.hProcess);
+                //NativeMethods.CloseHandle(pi.hThread);
+                //NativeMethods.CloseHandle(pi.hProcess);
             }
             
             NativeMethods.DestroyEnvironmentBlock(env);

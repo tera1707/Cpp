@@ -1,5 +1,7 @@
+using Microsoft.Toolkit.Uwp.Notifications;
 using MyUtilily;
 using System.Diagnostics;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace WorkerService1
@@ -15,7 +17,32 @@ namespace WorkerService1
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            CreateProcessAsUserOnCSharp.CreateProcessAsUser(@"C:\Windows\System32\notepad.exe C:\git\Cpp\UserProcessFromServiceJikken\WorkerService1\bin\Debug\aakill.bat");
+            Assembly myAssembly = Assembly.GetEntryAssembly();
+            string path = myAssembly.Location;
+            var dir = Path.GetDirectoryName(path);
+
+            Thread.Sleep(1000);
+            try
+            {
+                // 実験時は、このexeを手動でサービスと同じフォルダにコピー必要。
+                CreateProcessAsUserOnCSharp.CreateProcessAsUser(dir + @"\BlurWindowLauncher.exe");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            Thread.Sleep(1000);
+
+            try
+            {
+                // 実験時は、このexeを手動でサービスと同じフォルダにコピー必要。
+                CreateProcessAsUserOnCSharp.CreateProcessAsUser(dir + @"\ToastLauncher.exe");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
 
             while (!stoppingToken.IsCancellationRequested)
             {

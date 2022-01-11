@@ -1,0 +1,40 @@
+﻿<Window x:Class="BlurWindowLauncher.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:BlurWindowLauncher"
+        Width="525"
+        Height="350"
+        BorderBrush="#FF2990CC"
+        BorderThickness="1"
+        mc:Ignorable="d"
+        Topmost="False"
+        WindowStyle="None">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="0"
+                      GlassFrameThickness="-1"
+                      ResizeBorderThickness="0"
+                      UseAeroCaptionButtons="True" />
+    </WindowChrome.WindowChrome>
+    <Window.Background>
+        <!-- Tiled noise texture -->
+        <ImageBrush ImageSource="/noise.png"
+                    Opacity="0.05"
+                    Stretch="None"
+                    TileMode="Tile"
+                    Viewport="0,0,128,128"
+                    ViewportUnits="Absolute" />
+    </Window.Background>
+    <Grid>
+        <TextBlock HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   FontSize="46"
+                   Foreground="CornflowerBlue"
+                   Text="のぞき見防止中・・・">
+            <TextBlock.Effect>
+                <DropShadowEffect ShadowDepth="0" BlurRadius="35" Color="DarkGray" Opacity="0.8" />
+            </TextBlock.Effect>
+        </TextBlock>
+    </Grid>
+</Window>

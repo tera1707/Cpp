@@ -101,7 +101,7 @@ BOOL createProcessAsUser(const std::wstring& app, const std::wstring& param, HAN
     return retval;
 }
 
-void OnLogon(std::wstring appFullPath)
+void MyCreateProcessAsUser(std::wstring appFullPath)
 {
     auto dwSesId = ::WTSGetActiveConsoleSessionId();
     auto winlogonPid = GetProcessIdByName(L"winlogon.exe");
@@ -168,7 +168,7 @@ DWORD WINAPI SvcCtrlHandler(DWORD dwControl, DWORD dwEventType, LPVOID lpEventDa
     {
         a = 1;
 
-        OnLogon(L"C:\\Windows\\System32\\notepad.exe");
+        MyCreateProcessAsUser(L"C:\\Windows\\System32\\notepad.exe");
     }
 
 
