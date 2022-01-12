@@ -9,4 +9,7 @@ set DISCRIPTION="CsSvc Description..."
 
 echo -サービスのプロセスを無理やり終了させる
 taskkill /f /im WorkerService1.exe
-pause
+taskkill /f /im ToastLauncher.exe
+taskkill /f /im BlurWindowLauncher.exe
+
+rem pause

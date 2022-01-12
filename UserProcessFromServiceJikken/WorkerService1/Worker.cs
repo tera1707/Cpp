@@ -21,7 +21,6 @@ namespace WorkerService1
             string path = myAssembly.Location;
             var dir = Path.GetDirectoryName(path);
 
-            Thread.Sleep(1000);
             try
             {
                 // 実験時は、このexeを手動でサービスと同じフォルダにコピー必要。
@@ -31,7 +30,6 @@ namespace WorkerService1
             {
                 Console.WriteLine(ex.Message);
             }
-            Thread.Sleep(1000);
 
             try
             {

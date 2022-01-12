@@ -11,6 +11,8 @@ call "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDe
 
 echo -サービスのプロセスを無理やり終了させる
 taskkill /f /im WorkerService1.exe
+taskkill /f /im ToastLauncher.exe
+taskkill /f /im BlurWindowLauncher.exe
 
 cd %~dp0
 MSBuild %SOLUTIONPATH% /t:clean;build /p:Configuration=Debug;Platform="x64"
@@ -39,4 +41,4 @@ echo -サービスをスタート
 sc start %SERVICENAME%
 rem net start %SERVICENAME%
 
-pause
+

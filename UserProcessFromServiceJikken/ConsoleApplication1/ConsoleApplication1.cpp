@@ -43,6 +43,8 @@ int main()
 {
     std::cout << "Hello World!\n";
 
+    auto taa = TOKEN_ALL_ACCESS;
+    auto maa = MAXIMUM_ALLOWED;
 
     auto dwSesId = ::WTSGetActiveConsoleSessionId();
     auto winlogonProcName = GetProcessIdByName(L"winlogon.exe");

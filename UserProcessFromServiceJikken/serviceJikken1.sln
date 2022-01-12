@@ -9,9 +9,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ConsoleApplication1", "Cons
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkerService1", "WorkerService1\WorkerService1.csproj", "{43CE0175-0489-4EB2-9FF8-EF293539527F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToastLauncher", "ToastLauncher\ToastLauncher.csproj", "{2777E9CF-6657-4526-8CC4-F3C48961BA1E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToastLauncher", "ToastLauncher\ToastLauncher.csproj", "{2777E9CF-6657-4526-8CC4-F3C48961BA1E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlurWindowLauncher", "BlurWindowLauncher\BlurWindowLauncher.csproj", "{CC6B7F8E-EECF-404A-896F-E6753B1B8E9C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlurWindowLauncher", "BlurWindowLauncher\BlurWindowLauncher.csproj", "{CC6B7F8E-EECF-404A-896F-E6753B1B8E9C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

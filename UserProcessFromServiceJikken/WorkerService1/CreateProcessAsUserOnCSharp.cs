@@ -28,12 +28,18 @@ namespace MyUtilily
                 throw new InvalidOperationException();
             }
 
+
+
+
+            var ret = NativeMethods.WTSQueryUserToken(sessionId, out hPToken);
+
+
             var sa = new NativeMethods.SECURITY_ATTRIBUTES();
             sa.nLength = Marshal.SizeOf(sa);
 
             var hUserTokenDup = IntPtr.Zero;
 
-            if (!NativeMethods.DuplicateTokenEx(hPToken, NativeMethods.MAXIMUM_ALLOWED, ref sa, NativeMethods.SECURITY_IMPERSONATION_LEVEL.SecurityIdentification, NativeMethods.TOKEN_TYPE.TokenPrimary, out hUserTokenDup))
+            if (!NativeMethods.DuplicateTokenEx(hPToken, NativeMethods.TOKEN_ALL_ACCESS, ref sa, NativeMethods.SECURITY_IMPERSONATION_LEVEL.SecurityDelegation, NativeMethods.TOKEN_TYPE.TokenPrimary, out hUserTokenDup))
             {
                 NativeMethods.CloseHandle(hProcess);
                 NativeMethods.CloseHandle(hPToken);
@@ -44,18 +50,21 @@ namespace MyUtilily
             {
                 cb = Marshal.SizeOf(sa),
                 lpDesktop = @"winsta0\default",
+                wShowWindow = 0,//SW_HIDE
+                dwFlags = NativeMethods.STARTF_USESHOWWINDOW,
             };
 
-            var creationFlags = NativeMethods.CREATE_NEW_CONSOLE | NativeMethods.NORMAL_PRIORITY_CLASS;
+            //var creationFlags = NativeMethods.CREATE_NEW_CONSOLE | NativeMethods.NORMAL_PRIORITY_CLASS;
+            var creationFlags = NativeMethods.CREATE_UNICODE_ENVIRONMENT;
             var env = IntPtr.Zero;
 
             // アクティブユーザのセッションを設定します
-            var ret = NativeMethods.SetTokenInformation(hUserTokenDup, NativeMethods.TOKEN_INFORMATION_CLASS.TokenSessionId, ref sessionId, sizeof(NativeMethods.TOKEN_INFORMATION_CLASS));
+            var ret2 = NativeMethods.SetTokenInformation(hUserTokenDup, NativeMethods.TOKEN_INFORMATION_CLASS.TokenSessionId, ref sessionId, sizeof(NativeMethods.TOKEN_INFORMATION_CLASS));
 
             // 環境変数を設定
             if (NativeMethods.CreateEnvironmentBlock(out env, hUserTokenDup, true))
             {
-                creationFlags |= NativeMethods.CREATE_UNICODE_ENVIRONMENT;
+                //creationFlags |= NativeMethods.STARTF_USESHOWWINDOW;
             }
             else
             {
@@ -77,6 +86,9 @@ namespace MyUtilily
         {
             [DllImport("kernel32.dll")]
             public static extern uint WTSGetActiveConsoleSessionId();
+
+            [DllImport("Wtsapi32.dll")]
+            public static extern uint WTSQueryUserToken(long sessionId, out IntPtr phToken);
 
             [DllImport("kernel32.dll", SetLastError = true)]
             public static extern IntPtr OpenProcess(uint processAccess, bool bInheritHandle, int processId);
@@ -102,6 +114,7 @@ namespace MyUtilily
 
             // @OpenProcess
             public static uint MAXIMUM_ALLOWED = 0x02000000;
+            public static uint TOKEN_ALL_ACCESS = 0x020f01ff;
 
             [DllImport("advapi32.dll", SetLastError = true)]
             [return: MarshalAs(UnmanagedType.Bool)]
@@ -177,9 +190,10 @@ namespace MyUtilily
             public static extern bool CreateEnvironmentBlock(out IntPtr lpEnvironment, IntPtr hToken, bool bInherit);
 
             // @CreateEnvironmentBlock
-            public static uint CREATE_UNICODE_ENVIRONMENT = 0x00000400;
+            public static uint CREATE_UNICODE_ENVIRONMENT = 0x00000400; 
+            public static int STARTF_USESHOWWINDOW = 0x00000001; 
 
-            [StructLayout(LayoutKind.Sequential)]
+             [StructLayout(LayoutKind.Sequential)]
             public struct PROCESS_INFORMATION
             {
                 public IntPtr hProcess;
