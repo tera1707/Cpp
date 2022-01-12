@@ -14,34 +14,15 @@ namespace MyUtilily
         {
             var sessionId = NativeMethods.WTSGetActiveConsoleSessionId();
 
-            var winlogonId = Process.GetProcessesByName("winlogon").FirstOrDefault()?.Id;
-
-            if (winlogonId == null) throw new InvalidOperationException();
-
-            var hProcess = NativeMethods.OpenProcess(NativeMethods.MAXIMUM_ALLOWED, false, (int)winlogonId);
-
             IntPtr hPToken = IntPtr.Zero;
 
-            if (!NativeMethods.OpenProcessToken(hProcess, NativeMethods.TOKEN_DUPLICATE, out hPToken))
-            {
-                NativeMethods.CloseHandle(hProcess);
-                throw new InvalidOperationException();
-            }
-
-
-
-
             var ret = NativeMethods.WTSQueryUserToken(sessionId, out hPToken);
-
 
             var sa = new NativeMethods.SECURITY_ATTRIBUTES();
             sa.nLength = Marshal.SizeOf(sa);
 
-            var hUserTokenDup = IntPtr.Zero;
-
             if (!NativeMethods.DuplicateTokenEx(hPToken, NativeMethods.TOKEN_ALL_ACCESS, ref sa, NativeMethods.SECURITY_IMPERSONATION_LEVEL.SecurityDelegation, NativeMethods.TOKEN_TYPE.TokenPrimary, out hUserTokenDup))
             {
-                NativeMethods.CloseHandle(hProcess);
                 NativeMethods.CloseHandle(hPToken);
                 throw new InvalidOperationException();
             }
@@ -54,7 +35,7 @@ namespace MyUtilily
                 dwFlags = NativeMethods.STARTF_USESHOWWINDOW,
             };
 
-            //var creationFlags = NativeMethods.CREATE_NEW_CONSOLE | NativeMethods.NORMAL_PRIORITY_CLASS;
+            var hUserTokenDup = IntPtr.Zero;
             var creationFlags = NativeMethods.CREATE_UNICODE_ENVIRONMENT;
             var env = IntPtr.Zero;
 
@@ -62,23 +43,15 @@ namespace MyUtilily
             var ret2 = NativeMethods.SetTokenInformation(hUserTokenDup, NativeMethods.TOKEN_INFORMATION_CLASS.TokenSessionId, ref sessionId, sizeof(NativeMethods.TOKEN_INFORMATION_CLASS));
 
             // 環境変数を設定
-            if (NativeMethods.CreateEnvironmentBlock(out env, hUserTokenDup, true))
-            {
-                //creationFlags |= NativeMethods.STARTF_USESHOWWINDOW;
-            }
-            else
+            if (!NativeMethods.CreateEnvironmentBlock(out env, hUserTokenDup, true))
             {
                 env = IntPtr.Zero;
             }
 
             NativeMethods.PROCESS_INFORMATION pi = new NativeMethods.PROCESS_INFORMATION();
 
-            if (NativeMethods.CreateProcessAsUser(hUserTokenDup, IntPtr.Zero, commandline, IntPtr.Zero, IntPtr.Zero, false, creationFlags, env, IntPtr.Zero, ref si, out pi))
-            {
-                //NativeMethods.CloseHandle(pi.hThread);
-                //NativeMethods.CloseHandle(pi.hProcess);
-            }
-            
+            NativeMethods.CreateProcessAsUser(hUserTokenDup, IntPtr.Zero, commandline, IntPtr.Zero, IntPtr.Zero, false, creationFlags, env, IntPtr.Zero, ref si, out pi);
+
             NativeMethods.DestroyEnvironmentBlock(env);
         }
 
