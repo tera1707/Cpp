@@ -15,6 +15,7 @@ namespace MyUtilily
             var sessionId = NativeMethods.WTSGetActiveConsoleSessionId();
 
             IntPtr hPToken = IntPtr.Zero;
+            var hUserTokenDup = IntPtr.Zero;
 
             var ret = NativeMethods.WTSQueryUserToken(sessionId, out hPToken);
 
@@ -35,7 +36,6 @@ namespace MyUtilily
                 dwFlags = NativeMethods.STARTF_USESHOWWINDOW,
             };
 
-            var hUserTokenDup = IntPtr.Zero;
             var creationFlags = NativeMethods.CREATE_UNICODE_ENVIRONMENT;
             var env = IntPtr.Zero;
 
