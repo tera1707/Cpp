@@ -1,5 +1,6 @@
-﻿// WindowsProject1.cpp : アプリケーションのエントリ ポイントを定義します。
-//
+﻿// MSDOCSのパイプ関連ページ
+// https://docs.microsoft.com/en-us/windows/win32/ipc/named-pipe-client
+// https://docs.microsoft.com/ja-jp/windows/win32/ipc/multithreaded-pipe-server
 #include <windows.h> 
 #include <windowsx.h> 
 #include <stdio.h> 
@@ -289,7 +290,6 @@ DWORD WINAPI InstanceThread(LPVOID lpvParam)
     printf("InstanceThread created, receiving and processing messages.\n");
 
     // The thread's parameter is a handle to a pipe object instance. 
-
     hPipe = (HANDLE)lpvParam;
 
     // Loop until done reading
@@ -309,19 +309,21 @@ DWORD WINAPI InstanceThread(LPVOID lpvParam)
         {
             if (GetLastError() == ERROR_BROKEN_PIPE)
             {
-                Log(L"InstanceThread: client disconnected.");
+                //Log(L"InstanceThread: client disconnected.");
                 //_tprintf(TEXT("InstanceThread: client disconnected.\n"));
             }
             else
             {
                 auto err = GetLastError();
-                Log(L"InstanceThread ReadFile failed, GLE=" + std::to_wstring(err));
-                //_tprintf(TEXT("InstanceThread ReadFile failed, GLE=%d.\n"), );
+                //Log(L"InstanceThread ReadFile failed, GLE=" + std::to_wstring(err));
+                _tprintf(TEXT("InstanceThread ReadFile failed, GLE=%d.\n"), err);
             }
             break;
         }
 
-        Log(L"受信data：" + std::wstring(pchRequest));
+        //Log(L"受信data：" + std::wstring(pchRequest));
+        OutputDebugString(pchRequest);
+        _tprintf(TEXT("Read Success."));
 
         // Process the incoming message.
         GetAnswerToRequest(pchRequest, pchReply, &cbReplyBytes);
